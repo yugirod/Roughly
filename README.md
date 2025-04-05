@@ -1,6 +1,8 @@
-﻿# Project Name
+﻿# Roughly
 
 A cross-platform application built with React Native and Expo, designed to work on web, iOS, and Android from a single codebase.
+
+Roughly is a mobile calorie tracking app that uses AI to make the process of logging your food as easy as possible.
 
 ## Features
 
