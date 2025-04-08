@@ -8,7 +8,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "jest --watchAll",
+    "test": "jest --config jest.config.js --watchAll",
     "lint": "expo lint",
     "lint:fix": "npx eslint . --fix"
   },
@@ -46,6 +46,7 @@
     "@babel/core": "^7.25.2",
     "@eslint/config-array": "^0.20.0",
     "@eslint/eslintrc": "^3.3.1",
+    "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^13.2.0",
     "@types/jest": "^29.5.12",
     "@types/react": "~18.3.12",
