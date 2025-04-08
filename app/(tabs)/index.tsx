@@ -2,7 +2,7 @@ import { StyleSheet, TextInput, View, KeyboardAvoidingView, Platform, Button, Ac
 import { useState } from 'react';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { getChickenAndRiceCalories } from '../../src/utils/calorieUtils';
+import { getCalories } from '../../src/api/calorieService';
 
 export default function HomeScreen() {
   const [foodItem, setFoodItem] = useState('');
@@ -22,7 +22,7 @@ export default function HomeScreen() {
     setError(null);
     
     try {
-      const calorieCount = await getChickenAndRiceCalories(submittedItem);
+      const calorieCount = await getCalories(submittedItem);
       setCalories(parseInt(calorieCount));
       setError(null);
     } catch (err) {
