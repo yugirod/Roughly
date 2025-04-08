@@ -1,8 +1,5 @@
 export async function getChickenAndRiceCalories(foodItem: string): Promise<string> {
-  if (!process.env.LOCAL_API_URL) {
-    throw new Error('API_URL is not defined');
-  }
-  const apiUrl = process.env.LOCAL_API_URL;
+  const apiUrl = 'http://localhost:3000/api/get-calories';
 
     try {
       const response = await fetch(apiUrl, {
