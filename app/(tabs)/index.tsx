@@ -1,18 +1,42 @@
-import { StyleSheet, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, TextInput, View, KeyboardAvoidingView, Platform, Button, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { getChickenAndRiceCalories } from '../../src/utils/calorieUtils';
 
 export default function HomeScreen() {
   const [foodItem, setFoodItem] = useState('');
+  const [submittedFood, setSubmittedFood] = useState('');
+  const [calories, setCalories] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = () => {
-    // Logic to handle food item submission
-    console.log('Food item submitted:', foodItem);
-    // Here you would call your AI calorie counting function
+  const handleSubmit = async () => {
+    if (!foodItem.trim()) return;
     
-    // Clear the input after submission
+    const submittedItem = foodItem.trim();
+    setSubmittedFood(submittedItem);
+    
+    setCalories(null);
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const calorieCount = await getChickenAndRiceCalories(submittedItem);
+      setCalories(parseInt(calorieCount));
+      setError(null);
+    } catch (err) {
+      setError('Failed to fetch calorie information');
+    }
+    
+    setLoading(false);
+  };
+
+  const resetForm = () => {
     setFoodItem('');
+    setSubmittedFood('');
+    setCalories(null);
+    setError(null);
   };
 
   return (
@@ -37,9 +61,41 @@ export default function HomeScreen() {
           />
         </ThemedView>
         
-        <ThemedText style={styles.helperText}>
-          Type any food to being tracking your calories
-        </ThemedText>
+        <ThemedView style={styles.buttonContainer}>
+          <Button 
+            title="Get Calories" 
+            onPress={handleSubmit} 
+            disabled={loading || !foodItem.trim()}
+          />
+        </ThemedView>
+        
+        {loading && (
+          <ThemedView style={styles.resultContainer}>
+            <ActivityIndicator size="small" />
+            <ThemedText style={styles.statusText}>Calculating calories...</ThemedText>
+          </ThemedView>
+        )}
+        
+        {error && !loading && (
+          <ThemedView style={styles.resultContainer}>
+            <ThemedText style={styles.errorText}>{error}</ThemedText>
+          </ThemedView>
+        )}
+        
+        {calories && !loading && (
+          <ThemedView style={styles.resultContainer}>
+            <ThemedText style={styles.caloriesText}>
+              {submittedFood} contains approximately {calories} calories
+            </ThemedText>
+            <Button title="Reset" onPress={resetForm} />
+          </ThemedView>
+        )}
+        
+        {!calories && !loading && !error && (
+          <ThemedText style={styles.helperText}>
+            Type any food to begin tracking your calories
+          </ThemedText>
+        )}
       </ThemedView>
     </KeyboardAvoidingView>
   );
@@ -76,6 +132,34 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
     color: '#333',
+  },
+  buttonContainer: {
+    marginBottom: 20,
+    width: '100%',
+    maxWidth: 400,
+    alignItems: 'center',
+  },
+  resultContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+    padding: 15,
+    borderRadius: 8,
+    width: '100%',
+    maxWidth: 400,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
+  },
+  caloriesText: {
+    fontSize: 16,
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  statusText: {
+    marginTop: 10,
+  },
+  errorText: {
+    color: '#e53935',
+    marginBottom: 10,
   },
   helperText: {
     fontSize: 14,
