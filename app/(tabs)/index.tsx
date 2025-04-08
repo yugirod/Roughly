@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, View, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { useState } from 'react';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
