@@ -3,16 +3,31 @@ import { useState } from 'react';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { getChickenAndRiceCalories } from '../../src/utils/calorieUtils';
+import { FoodEntryCard } from '@/components/ui/FoodEntryCard'; // Adjust path if needed
+import { FlatList } from 'react-native';
+type FoodEntry = {
+  id: string;
+  name: string;
+  calories: number;
+};
 
 export default function HomeScreen() {
   const [foodItem, setFoodItem] = useState('');
+  const [foodEntries, setFoodEntries] = useState<FoodEntry[]>([]);
   const [submittedFood, setSubmittedFood] = useState('');
   const [calories, setCalories] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
 
   const handleSubmit = async () => {
     if (!foodItem.trim()) return;
+    const newEntry = {
+      id: Date.now().toString(),
+      name: foodItem,
+      calories: Math.floor(Math.random() * 500) + 100,
+    };
+    setFoodEntries([newEntry, ...foodEntries]);
     
     const submittedItem = foodItem.trim();
     setSubmittedFood(submittedItem);
@@ -47,6 +62,31 @@ export default function HomeScreen() {
         <ThemedText type="title" style={styles.title}>
           Roughly
         </ThemedText>
+
+        {foodEntries.length > 0 && (
+  <FlatList
+    data={foodEntries}
+    keyExtractor={(item) => item.id}
+    renderItem={({ item }) => (
+      <FoodEntryCard
+        foodName={item.name}
+        calories={item.calories}
+        onDelete={() => {
+          setFoodEntries(foodEntries.filter(entry => entry.id !== item.id));
+        }}
+      />
+    )}
+    style={{ marginTop: 50, 
+    width: '100%', 
+    paddingHorizontal: 16 }}
+    
+    contentContainerStyle={{
+      paddingBottom: 20,
+      paddingTop: 30, // Add padding to the top of the content
+    }}
+    
+  />
+)}
         
         <ThemedView style={styles.inputContainer}>
           <TextInput
